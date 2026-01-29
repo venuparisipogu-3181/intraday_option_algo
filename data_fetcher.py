@@ -2,8 +2,8 @@
 from truedata_ws.websocket.TD import TD
 
 # --- TrueData credentials ---
-USERNAME = "your_username"
-PASSWORD = "your_password"
+USERNAME = "venuparisipogu@gmail.com"
+PASSWORD = "sunandha@3181"
 LIVE_PORT = 8082
 
 # --- Initialize TrueData connection ---
