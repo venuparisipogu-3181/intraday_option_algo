@@ -1,30 +1,21 @@
-# main.py
-import streamlit as st
-from data_fetcher import live_data
-from algo_engine import get_atm_strike, get_trend
-import numpy as np
+import time
+from data_fetcher import connect_truedata
+from algo_engine import generate_signal
+from telegram_alert import send_alert
 
-st.title("Intraday Options Algo Dashboard")
+td = connect_truedata()
 
-symbols = ["NIFTY-I","BANKNIFTY-I","SENSEX-I"]
-selected_symbol = st.selectbox("Select Index", symbols)
+print("Algo started")
 
-data = live_data.get(selected_symbol, {})
+while True:
+    price = 73500
+    vwap = 73450
+    volume = 2.0
+    oi_change = 400
 
-if data:
-    spot = data['ltp']
-    gap = 50 if selected_symbol != "BANKNIFTY-I" else 100
-    atm = get_atm_strike(spot, gap)
+    signal = generate_signal(price, vwap, volume, oi_change)
 
-    # Simplified trend calculation
-    ltp_list = [spot]
-    vwap = np.mean(ltp_list)
-    ema20 = np.mean(ltp_list)
-    ema50 = np.mean(ltp_list)
-    trend = get_trend(spot, vwap, ema20, ema50)
+    if signal:
+        send_alert(f"SIGNAL: {signal}")
 
-    st.write(f"Spot: {spot}")
-    st.write(f"ATM Strike: {atm}")
-    st.write(f"Trend: {trend}")
-else:
-    st.write("Waiting for TrueData ticks...")
+    time.sleep(60)
